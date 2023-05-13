@@ -86,18 +86,32 @@ class Scene2 extends DKScene {
     preload() {
         this.load.image('nsx',"assets/nsx.png");
     }
-    create(){
-        
+    onEnter(){
+        this.cameras.main.setBackgroundColor('000');
+        let background = this.add.image(300,350,"nsx")
+            .setScale(1)
+            .setOrigin(0,0);
+        this.tweens.add({
+            targets: background,
+            alpha: { from: 1, to: 0 },
+            easing: 'Quintic.in',
+            repeat: -1,
+        })
+        this.add.text(950,150,"You started the car and leave the neighborhood")
+            .setOrigin(0.5)
+            .setStyle({ fontSize: `${2.5 * this.s}px`, color: '#fff' })
+            .setDepth(100);
+            this.time.delayedCall(6000, () => this.gotoScene('scene3'));
     }
 }
-class Scene3 extends Phaser.Scene {
+class Scene3 extends DKScene {
     constructor() {
         super('scene3');
     }
     preload() {
-
+        //Make a top down maze through litle cars that you have to get through
     }
-    create(){
+    onEnter(){
         
     }
 }
@@ -106,7 +120,7 @@ class Scene4 extends Phaser.Scene {
         super('scene4');
     }
     preload(){
-
+        //You made it out of traffic, now swim!
     }
     create(){
         
@@ -117,7 +131,7 @@ class Scene5 extends Phaser.Scene {
         super('scene5');
     }
     preload(){
-
+        //Swimming part of the game where you go through cars n stuffs
     }
     create(){
         
@@ -156,7 +170,7 @@ const game = new Phaser.Game({
         width: 1920,
         height: 1080
     },
-    scene: [Scene1, Intro, Scene2, Scene3, Scene4, Scene5, Outro],
+    scene: [Scene3, Intro, Scene1, Scene2, Scene4, Scene5, Outro],
     title: "Adventure Game",
     physics: {
         default: 'arcade',
