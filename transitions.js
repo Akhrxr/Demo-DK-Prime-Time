@@ -14,16 +14,16 @@ class DKScene extends Phaser.Scene {
         this.cameras.main.setBackgroundColor('#444');
         this.cameras.main.fadeIn(this.transitionDuration, 0, 0, 0);
 
-        this.box = this.add.rectangle(0,0,600,400).setOrigin(0, 0).setFillStyle(0);
+        this.box = this.add.rectangle(0, 0, 600, 400).setOrigin(0, 0).setFillStyle(0);
         this.box.depth = 90
-        this.messageBox = this.add.text(0,0)
+        this.messageBox = this.add.text(0, 0)
             .setStyle({ fontSize: `${2.2 * this.s}px`, color: '#a0e' })
             .setWordWrapWidth(this.w * 0.25 - 2 * this.s);
         this.messageBox.depth = 91
-        this.add.text(this.w-3*this.s, this.h-3*this.s, "📺")
+        this.add.text(this.w - 3 * this.s, this.h - 3 * this.s, "📺")
             .setDepth(100)
             .setStyle({ fontSize: `${2 * this.s}px` })
-            .setInteractive({useHandCursor: true})
+            .setInteractive({ useHandCursor: true })
             .on('pointerover', () => this.showMessage('Fullscreen?'))
             .on('pointerdown', () => {
                 if (this.scale.isFullscreen) {
@@ -37,11 +37,29 @@ class DKScene extends Phaser.Scene {
 
     }
 
-    startDrag(pointer,targets) {
-        this.input.off('pointerdown',this.startDrag, this);
-        this.dragObj=targets[0];
-        this.input.on('pointermove',this.doDrag, this);
-        this.input.on('pointerup',this.stopDrag, this);
+    movementud(r32) {
+        if (this.cursorKeys.up.isDown) {
+            this.r32.y += -3
+        }
+        else if (this.cursorKeys.down.isDown) {
+            this.r32.y += 3
+        }
+    }
+    movementlr(r32) {
+        if (this.cursorKeys.left.isDown) {
+            this.r32.x += -3
+        }
+        else if (this.cursorKeys.right.isDown) {
+            this.r32.x += 3
+        }
+    }
+
+
+    startDrag(pointer, targets) {
+        this.input.off('pointerdown', this.startDrag, this);
+        this.dragObj = targets[0];
+        this.input.on('pointermove', this.doDrag, this);
+        this.input.on('pointerup', this.stopDrag, this);
 
     }
 
@@ -50,10 +68,10 @@ class DKScene extends Phaser.Scene {
         this.dragObj.y = pointer.y;
     }
 
-    stopDrag(pointer){
-        this.input.on('pointerdown',this.startDrag, this);
-        this.input.off('pointermove',this.doDrag, this);
-        this.input.off('pointerup',this.stopDrag, this);
+    stopDrag(pointer) {
+        this.input.on('pointerdown', this.startDrag, this);
+        this.input.off('pointermove', this.doDrag, this);
+        this.input.off('pointerup', this.stopDrag, this);
 
     }
 
@@ -74,5 +92,5 @@ class DKScene extends Phaser.Scene {
     onEnter() {
         console.warn('This AdventureScene did not implement onEnter():', this.constructor.name);
     }
-    
+
 }

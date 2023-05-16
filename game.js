@@ -95,6 +95,7 @@ class Scene2 extends DKScene {
             targets: background,
             alpha: { from: 1, to: 0 },
             easing: 'Quintic.in',
+            duration: 1000,
             repeat: -1,
         })
         this.add.text(950,150,"You started the car and leave the neighborhood")
@@ -109,10 +110,53 @@ class Scene3 extends DKScene {
         super('scene3');
     }
     preload() {
-        //Make a top down maze through litle cars that you have to get through
+        this.load.image('porsche',"assets/porschecar.png");
+        this.load.image('lot',"assets/lot.png");
+        this.load.image('redcar',"assets/redcar.png");
+        this.load.image('blackcar',"assets/blackcar.png");
+        this.load.image('purpcar',"assets/purpcar.png");
+        this.load.image('driver',"assets/driver.png");
     }
     onEnter(){
+        this.add.image(960,550,"lot")
+            .setScale(1.22)
+            .setDepth(91)
+        this.add.text(this.w/2,this.h/2 - 50,"Park the car")
+            .setStyle({ fontSize: `${3 * this.s}px`, color: '#000' })
+            .setWordWrapWidth(this.w * 0.25 - 2 * this.s)
+            .setDepth(95);
+        this.add.text(this.w/2 -150,this.h/2 + 50,"Use the arrow keys to move")
+            .setStyle({ fontSize: `${2.5 * this.s}px`, color: '#aef' })
+            .setDepth(95);
+        let driver = this.physics.add.sprite(100,500,"driver")
+            .setScale(0.25)
+            .setInteractive()
+            .setCollideWorldBounds(true)
+            .setDepth(99)
+            .setOrigin(0,0)
+            //.setAngle(180)
+            //.setRotation();
         
+        let black1 = this.physics.add.image(990,170,"blackcar")
+            .setImmovable()
+            .setScale(0.25)
+            .setDepth(99)
+        let red = this.physics.add.image("redcar")
+            .setImmovable()
+            .setScale(0.9)
+        let purp = this.physics.add.image("purpcar")
+            .setImmovable()
+            .setScale(0.9)
+        let porsche = this.physics.add.image("porsche")
+            .setImmovable()
+            .setScale(0.9)
+        this.physics.add.collider(driver, black1);
+        this.physics.add.collider(driver, red);
+        this.physics.add.collider(driver, purp);
+        this.physics.add.collider(driver, porsche);
+    }
+    update() {
+
     }
 }
 class Scene4 extends Phaser.Scene {
@@ -170,8 +214,8 @@ const game = new Phaser.Game({
         width: 1920,
         height: 1080
     },
-    scene: [Scene3, Intro, Scene1, Scene2, Scene4, Scene5, Outro],
-    title: "Adventure Game",
+    scene: [Scene3, Intro, Scene1, Scene4, Scene5, Outro],
+    title: "DK PRIME TIME",
     physics: {
         default: 'arcade',
         arcade: {
