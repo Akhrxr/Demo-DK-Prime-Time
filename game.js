@@ -242,16 +242,15 @@ class Scene4 extends DKScene {
     }
     onEnter(){
         this.cameras.main.setBackgroundColor('000');
-        let background = this.add.image(500,950,"rx7")
-            .setScale(20)
-            .setOrigin(0,0)
-        /this.tweens.add({
-            targets: background,
+        let back = this.add.image(950,700,"rx7");
+        this.tweens.add({
+            targets: back,
             alpha: { from: 1, to: 0 },
             easing: 'Quintic.in',
             duration: 1000,
             repeat: -1,
         })
+       // console.log(back)
         this.add.text(950,150,"You parked the car. Now go get your sandwich!")
             .setOrigin(0.5)
             .setStyle({ fontSize: `${2.5 * this.s}px`, color: '#fff' })
