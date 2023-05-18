@@ -118,56 +118,145 @@ class Scene3 extends DKScene {
         this.load.image('driver',"assets/driver.png");
     }
     onEnter(){
+        this.cursorKeys = this.input.keyboard.createCursorKeys();
         this.add.image(960,550,"lot")
             .setScale(1.22)
             .setDepth(91)
-        this.add.text(this.w/2,this.h/2 - 50,"Park the car")
-            .setStyle({ fontSize: `${3 * this.s}px`, color: '#000' })
-            .setWordWrapWidth(this.w * 0.25 - 2 * this.s)
+        this.add.text(this.w/2 - 260,this.h/2 - 50,"Park the car, not here tho. Keep driving")
+            .setStyle({ fontSize: `${2.3 * this.s}px`, color: '#000' })
             .setDepth(95);
         this.add.text(this.w/2 -150,this.h/2 + 50,"Use the arrow keys to move")
             .setStyle({ fontSize: `${2.5 * this.s}px`, color: '#aef' })
             .setDepth(95);
-        let driver = this.physics.add.sprite(100,500,"driver")
+        this.r32 = this.physics.add.sprite(100,500,"driver")
             .setScale(0.25)
             .setInteractive()
             .setCollideWorldBounds(true)
             .setDepth(99)
-            .setOrigin(0,0)
-            //.setAngle(180)
-            //.setRotation();
-        
-        let black1 = this.physics.add.image(990,170,"blackcar")
+        this.black1 = this.physics.add.image(990,170,"blackcar")
             .setImmovable()
             .setScale(0.25)
             .setDepth(99)
-        let red = this.physics.add.image("redcar")
+        this.black2 = this.physics.add.image(1240,170,"blackcar")
             .setImmovable()
-            .setScale(0.9)
-        let purp = this.physics.add.image("purpcar")
+            .setScale(0.25)
+            .setDepth(99)
+        this.red = this.physics.add.image(990,920,"redcar")
             .setImmovable()
-            .setScale(0.9)
-        let porsche = this.physics.add.image("porsche")
+            .setScale(0.3)
+            .setDepth(99)
+        this.purp = this.physics.add.image(720,920,"purpcar")
             .setImmovable()
-            .setScale(0.9)
-        this.physics.add.collider(driver, black1);
-        this.physics.add.collider(driver, red);
-        this.physics.add.collider(driver, purp);
-        this.physics.add.collider(driver, porsche);
+            .setScale(0.25)
+            .setDepth(99)
+        this.porsche = this.physics.add.image(1510,920,"porsche")
+            .setImmovable()
+            .setScale(0.4)
+            .setDepth(99)
+        this.porsche2 = this.physics.add.image(1510,170,"porsche")
+            .setImmovable()
+            .setScale(0.4)
+            .setDepth(99)
+        this.box1 = this.add.rectangle(720,190,240,350)
+            .setDepth(99)
+            .setFillStyle(0xff0000, 0.1)
+        this.box2 = this.add.rectangle(1240,920,240,350)
+            .setDepth(99)
+            .setFillStyle(0xff0000, 0.1)
+        this.finish = this.add.rectangle(1900,490,20,1350)
+            .setDepth(99)
+            .setFillStyle(0xff0000, 0.1)
+        this.physics.add.existing(this.black2);
+        this.physics.add.existing(this.black1);
+        this.physics.add.existing(this.red);
+        this.physics.add.existing(this.purp);
+        this.physics.add.existing(this.porsche);
+        this.physics.add.existing(this.porsche2);
+        this.physics.add.existing(this.box1);
+        this.physics.add.existing(this.box2);
+        this.physics.add.existing(this.finish);
+        this.messageBox = this.add.text(100, 200)
+            .setStyle({ fontSize: `${2.2 * this.s}px`, color: '#ea0' })
+            .setWordWrapWidth(this.w * 0.25 - 2 * this.s)
+            .setDepth(99);
     }
     update() {
-
+        if(this.physics.overlap(this.r32, this.finish)) {
+            this.gotoScene('scene4');
+        }
+        if(this.cursorKeys.right.isDown){
+            this.r32.x += 2.5
+        }
+        else if(this.cursorKeys.left.isDown){
+            this.r32.x += -2.5
+        }
+        if(this.cursorKeys.up.isDown){
+            this.r32.y += -2.5
+        }
+        else if(this.cursorKeys.down.isDown) {
+            this.r32.y += 2.5
+        }
+        if( this.physics.collide(this.r32, this.purp) |
+            this.physics.collide(this.r32, this.red) | 
+            this.physics.collide(this.r32, this.porsche2) | 
+            this.physics.collide(this.r32, this.porsche) | 
+            this.physics.collide(this.r32, this.box1) | 
+            this.physics.collide(this.r32, this.box2) | 
+            this.physics.collide(this.r32, this.black2) | 
+            this.physics.collide(this.r32, this.black1)
+        ) {
+            this.r32.x = 100
+            this.r32.y = 500
+        }
+        if(this.physics.collide(this.r32, this.box1) | this.physics.collide(this.r32, this.box2)) {
+            this.messageBox.setText("You cant park here. (Bc I said so)");
+            this.tweens.add({
+                targets: this.messageBox,
+                alpha: { from: 1, to: 0 },
+                easing: 'Quintic.in',
+                duration: 4 * this.transitionDuration
+            });
+        }
+        if(this.physics.collide(this.r32, this.black1) | 
+            this.physics.collide(this.r32, this.black2) |
+            this.physics.collide(this.r32, this.porsche) |
+            this.physics.collide(this.r32, this.porsche2) |
+            this.physics.collide(this.r32, this.red) |
+            this.physics.collide(this.r32, this.purp) ) {
+            this.messageBox.setText("You crashed. Try again");
+            this.tweens.add({
+                targets: this.messageBox,
+                alpha: { from: 1, to: 0 },
+                easing: 'Quintic.in',
+                duration: 4 * this.transitionDuration
+            });
+        }
     }
 }
-class Scene4 extends Phaser.Scene {
+class Scene4 extends DKScene {
     constructor() {
         super('scene4');
     }
     preload(){
-        //You made it out of traffic, now swim!
+        this.load.image('rx7',"assets/rx7.png");
     }
-    create(){
-        
+    onEnter(){
+        this.cameras.main.setBackgroundColor('000');
+        let background = this.add.image(500,950,"rx7")
+            .setScale(20)
+            .setOrigin(0,0)
+        /this.tweens.add({
+            targets: background,
+            alpha: { from: 1, to: 0 },
+            easing: 'Quintic.in',
+            duration: 1000,
+            repeat: -1,
+        })
+        this.add.text(950,150,"You parked the car. Now go get your sandwich!")
+            .setOrigin(0.5)
+            .setStyle({ fontSize: `${2.5 * this.s}px`, color: '#fff' })
+            .setDepth(100);
+            this.time.delayedCall(6000, () => this.gotoScene('scene5'));
     }
 }
 class Scene5 extends Phaser.Scene {
@@ -214,7 +303,7 @@ const game = new Phaser.Game({
         width: 1920,
         height: 1080
     },
-    scene: [Scene3, Intro, Scene1, Scene4, Scene5, Outro],
+    scene: [Scene4, Intro, Scene1, Scene2, Scene3, Scene5, Outro],
     title: "DK PRIME TIME",
     physics: {
         default: 'arcade',

@@ -1,3 +1,6 @@
+
+
+
 class DKScene extends Phaser.Scene {
 
     constructor(key) {
@@ -32,27 +35,11 @@ class DKScene extends Phaser.Scene {
                     this.scale.startFullscreen();
                 }
             });
-
+        this.cursorKeys = this.input.keyboard.createCursorKeys();
         this.onEnter();
 
     }
-
-    movementud(r32) {
-        if (this.cursorKeys.up.isDown) {
-            this.r32.y += -3
-        }
-        else if (this.cursorKeys.down.isDown) {
-            this.r32.y += 3
-        }
-    }
-    movementlr(r32) {
-        if (this.cursorKeys.left.isDown) {
-            this.r32.x += -3
-        }
-        else if (this.cursorKeys.right.isDown) {
-            this.r32.x += 3
-        }
-    }
+    
 
 
     startDrag(pointer, targets) {
@@ -87,6 +74,7 @@ class DKScene extends Phaser.Scene {
 
     gotoScene(key) {
         this.cameras.main.fade(this.transitionDuration, 0, 0, 0);
+        this.scene.start(key);
     }
 
     onEnter() {
