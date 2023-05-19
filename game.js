@@ -135,11 +135,11 @@ class Scene3 extends DKScene {
             .setDepth(99)
         this.black1 = this.physics.add.image(990,170,"blackcar")
             .setImmovable()
-            .setScale(0.25)
+            .setScale(0.64)
             .setDepth(99)
         this.black2 = this.physics.add.image(1240,170,"blackcar")
             .setImmovable()
-            .setScale(0.25)
+            .setScale(0.64)
             .setDepth(99)
         this.red = this.physics.add.image(990,920,"redcar")
             .setImmovable()
@@ -258,27 +258,106 @@ class Scene4 extends DKScene {
             this.time.delayedCall(6000, () => this.gotoScene('scene5'));
     }
 }
-class Scene5 extends Phaser.Scene {
+class Scene5 extends DKScene {
     constructor() {
         super('scene5');
     }
     preload(){
-        //Swimming part of the game where you go through cars n stuffs
+        this.load.image('store',"assets/store.jpg")
+        this.load.image('sanwich',"assets/sanwich.png")
+        this.load.image('drank',"assets/drank.png")
+        this.load.image('cart',"assets/cart.png")
+        this.load.image('cartsan',"assets/cartsanwich.png")
+        this.load.image('cartbot',"assets/cartbottle.png")
     }
-    create(){
-        
+    onEnter(){
+        this.input.on('pointerdown',this.startDrag, this);
+        this.cont = 0;
+        this.showMessage("Grab yo sanwish")
+        this.add.image(960,550,"store")
+            .setScale(3.4)
+        this.sanwhich = this.add.sprite(1210, 440, "sanwich")
+            .setScale(0.1)
+            .setInteractive({useHandCursor:true})
+            .setAlpha(1)
+            .on('pointerover', () => {
+                this.showMessage("Time to eats, put it in the basket")
+            })
+        this.botto = this.add.sprite(840, 600, "drank")
+            .setScale(0.1)
+            .setInteractive({useHandCursor:true})
+            .setAlpha(1)
+            .on('pointerover', () => {
+                this.showMessage("Time to drank, put it in the basket")
+            })
+        this.cart = this.add.image(1410,860,"cart")
+            .setScale(0.6)
+        this.cartbot = this.add.image(1410,860,"cartbot")
+            .setScale(0.6)
+            .setAlpha(0)
+        this.cartsan = this.add.image(1410,860,"cartsan")
+            .setScale(0.6)
+            .setAlpha(0)
+        this.cartfin = this.add.image(1410,860,"cartfin")
+            .setScale(0.6)
+            .setAlpha(0)
+        this.box = this.add.rectangle(1450,800,500,340)
+            .setFillStyle(0xff0000, 0);
+        this.physics.add.existing(this.box);
+        this.physics.add.existing(this.botto);
+        this.physics.add.existing(this.sanwhich);
     }
+    update(){
+        if(this.physics.overlap(this.sanwhich, this.box)) {
+            this.sanwhich.destroy()
+            this.cartsan.setAlpha(1);
+            this.showMessage("Mm yum")
+            this.cont++;
+        }
+        if(this.physics.overlap(this.botto,this.box)) {
+            this.botto.destroy()
+            this.cartbot.setAlpha(1);
+            this.showMessage("bouta gulp this thang")
+            this.cont++;
+        }
+        if(this.cont == 2) {
+            this.showMessage("Nice, time to go home!")
+            this.time.delayedCall(3000, () => this.gotoScene('outro'));
+        }
+    }     
 }
 class Outro extends Phaser.Scene {
     constructor() {
         super('outro');
     }
-    preload(){
-
+    preload() {
+        this.load.image('r32end', 'assets/r32end.png');
+        this.load.audio('tubo', 'assets/turbo.mp3');
     }
     create(){
-        
+        this.startupsound = this.sound.add("tubo");
+
+        var tuboConfig = {
+            volume: 0.5,
+            loop: false,
+            rate: 1.5,
+            mute: false,
+        }
+        this.cameras.main.setBackgroundColor('#444');
+        this.background = this.add.image(100,0, "r32end");
+        this.background.setOrigin(0,0);
+        this.background.setScale(.75);
+
+        this.add.text(50,50, "You did it! Now you won't starve! ").setFontSize(50);
+        this.add.text(50,100, "Click anywhere to restart.").setFontSize(20);
+        this.input.on('pointerdown', () => {
+            this.cameras.main.fade(1000, 0,0,0);
+            this.startupsound.play(tuboConfig);
+            this.time.delayedCall(1000, () => this.scene.start('intro'));
+            //this.startupsound.stop();
+        });
     }
+
 }
 
 var startConfig = {
@@ -302,12 +381,12 @@ const game = new Phaser.Game({
         width: 1920,
         height: 1080
     },
-    scene: [Scene4, Intro, Scene1, Scene2, Scene3, Scene5, Outro],
+    scene: [Intro, Scene1, Scene2, Scene3, Scene4, Scene5, Outro],
     title: "DK PRIME TIME",
     physics: {
         default: 'arcade',
         arcade: {
-            debug: true
+            debug: false
         }
     }
 });
